@@ -25,15 +25,15 @@ let wcfHomeTeam = wcf2014.map(function (item) {
 console.log(wcfHomeTeam);
 
 //Get Away Team Name
-let wcfAwayTeam = wcf2014.map((item) => item["Away Team Name"]);
+const wcfAwayTeam = wcf2014.map((item) => item["Away Team Name"]);
 console.log(wcfAwayTeam);
 
 //Get Home Team Goals
-let wcfHomeTeamGoals = wcf2014.map((item) => item["Home Team Goals"]);
+const wcfHomeTeamGoals = wcf2014.map((item) => item["Home Team Goals"]);
 console.log(wcfHomeTeamGoals);
 
 //Get Away Team Goals
-let wcfAwayTeamGoals = wcf2014.map((item) => item["Away Team Goals"]);
+const wcfAwayTeamGoals = wcf2014.map((item) => item["Away Team Goals"]);
 console.log(wcfAwayTeamGoals);
 
 /* Task 2: Create a function called  getFinals that takes `data` as an argument and returns an array of objects with only finals data */
@@ -77,10 +77,16 @@ Parameters:
  */
 
 function getWinnersByYear(data, getWinners, getYears) {
-  getYears(data);
+  let years = getYears(data, getFinals);
+  let winners = getWinners(data, getFinals);
+  let winnersByYear = [];
+  for (let i = 0; i < years.length; i++) {
+    winnersByYear.push(`In ${years[i]}, ${winners[i]} won the world cup!`);
+  }
+  return winnersByYear;
 }
 
-getWinnersByYear();
+console.log(getWinnersByYear(fifaData, getWinners, getYears));
 
 /* Task 6: Write a function called `getAverageGoals` that accepts a parameter `data` and returns the the average number of home team goals and away team goals scored per match (Hint: use .reduce and do this in 2 steps) */
 
