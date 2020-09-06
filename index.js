@@ -95,7 +95,12 @@ function getAverageGoals(data) {
   let totalHomeGoals = data.reduce(function (accumulator, item) {
     return accumulator + item["Home Team Goals"];
   }, 0);
-  return Math.round(totalHomeGoals / data.length);
+  let totalAwayGoals = data.reduce(function (accumulator, item) {
+    return accumulator + item["Away Team Goals"];
+  }, 0);
+  let avgHomeGoals = Math.round(totalHomeGoals / data.length);
+  let avgAwayGoals = Math.round(totalAwayGoals / data.length);
+  return `Average Home Team Goals: ${avgHomeGoals} Average Away Team Goals: ${avgAwayGoals}`;
 }
 
 console.log(getAverageGoals(fifaData));
@@ -107,19 +112,68 @@ console.log(getAverageGoals(fifaData));
 Hint: Investigate your data to find "team initials"!
 Hint: use `.reduce` */
 
-function getCountryWins(/* code here */) {
-  /* code here */
+function getCountryWins(data, teamInitials) {
+  let countryGames = data.filter(
+    (games) =>
+      games["Away Team Initials"] === teamInitials ||
+      games["Home Team Initials"] === teamInitials
+  );
+  let winners = [];
+  countryGames.forEach(function (item) {
+    if (
+      item["Home Team Initials"] === teamInitials &&
+      item["Home Team Goals"] > item["Away Team Goals"]
+    ) {
+      winners.push(item);
+    } else if (
+      item["Away Team Initials"] === teamInitials &&
+      item["Away Team Goals"] > item["Home Team Goals"]
+    ) {
+      winners.push(item);
+    }
+  });
+  return `${teamInitials} has won ${winners.length} world cup games!`;
 }
 
-getCountryWins();
+console.log(getCountryWins(fifaData, "FRA"));
 
 /* Stretch 3: Write a function called getGoals() that accepts a parameter `data` and returns the team with the most goals score per appearance (average goals for) in the World Cup finals */
 
-function getGoals(/* code here */) {
-  /* code here */
+function getGoals(data) {
+  let finals = getFinals(data);
+  let teams = [];
+  finals.forEach(function (item) {
+    if (!teams.includes(item["Away Team Name"])) {
+      teams.push(item["Away Team Name"]);
+    }
+    if (!teams.includes(item["Home Team Name"])) {
+      teams.push(item["Home Team Name"]);
+    }
+  });
+  teams.forEach(function (item) {
+    let awayGames = finals.filter((games) => games["Away Team Name"] === item);
+    let homeGames = finals.filter((games) => games["Home Team Name"] === item);
+    let goalList = [];
+    awayGames.forEach(function (item) {
+      goalList.push(item["Away Team Goals"]);
+    });
+    homeGames.forEach(function (item) {
+      goalList.push(item["Home Team Goals"]);
+    });
+    let totalGoals = goalList.reduce(function (accumulator, item) {
+      return accumulator + item;
+    }, 0);
+    let avgGoals = Math.round((totalGoals / goalList.length) * 100) / 100;
+    console.log({
+      team: item,
+      appearances: goalList.length,
+      totalGoals: totalGoals,
+      averageGoals: avgGoals,
+    });
+  });
 }
 
-getGoals();
+console.log(getGoals(fifaData));
 
 /* Stretch 4: Write a function called badDefense() that accepts a parameter `data` and calculates the team with the most goals scored against them per appearance (average goals against) in the World Cup finals */
 
